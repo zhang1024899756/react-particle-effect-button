@@ -11,7 +11,7 @@ import raf from 'raf'
 
 import styles from './styles.css'
 
-const noop = () => { }
+const noop = () => {}
 
 export default class ParticleEffectButton extends Component {
   static propTypes = {
@@ -19,19 +19,22 @@ export default class ParticleEffectButton extends Component {
     children: PropTypes.node,
     className: PropTypes.string,
     duration: PropTypes.number,
-    easing: PropTypes.oneOfType([ PropTypes.string, PropTypes.arrayOf(PropTypes.number) ]),
-    type: PropTypes.oneOf([ 'circle', 'rectangle', 'triangle' ]),
-    style: PropTypes.oneOf([ 'fill', 'stroke' ]),
-    direction: PropTypes.oneOf([ 'left', 'right', 'top', 'bottom' ]),
+    easing: PropTypes.oneOfType([
+      PropTypes.string,
+      PropTypes.arrayOf(PropTypes.number)
+    ]),
+    type: PropTypes.oneOf(['circle', 'rectangle', 'triangle']),
+    style: PropTypes.oneOf(['fill', 'stroke']),
+    direction: PropTypes.oneOf(['left', 'right', 'top', 'bottom']),
     canvasPadding: PropTypes.number,
-    size: PropTypes.oneOfType([ PropTypes.number, PropTypes.func ]),
-    speed: PropTypes.oneOfType([ PropTypes.number, PropTypes.func ]),
+    size: PropTypes.oneOfType([PropTypes.number, PropTypes.func]),
+    speed: PropTypes.oneOfType([PropTypes.number, PropTypes.func]),
     color: PropTypes.string,
     particlesAmountCoefficient: PropTypes.number,
     oscillationCoefficient: PropTypes.number,
     onBegin: PropTypes.func,
     onComplete: PropTypes.func
-  }
+  };
 
   static defaultProps = {
     hidden: false,
@@ -41,63 +44,80 @@ export default class ParticleEffectButton extends Component {
     style: 'fill',
     direction: 'left',
     canvasPadding: 150,
-    size: () => Math.floor((Math.random() * 3) + 1),
+    size: () => Math.floor(Math.random() * 3 + 1),
     speed: () => rand(4),
     color: '#000',
     particlesAmountCoefficient: 3,
     oscillationCoefficient: 20,
     onBegin: noop,
     onComplete: noop
-  }
+  };
 
   state = {
     status: this.props.hidden ? 'hidden' : 'normal',
     progress: 0
-  }
+  };
 
   _rect = {
     width: 0,
     height: 0
-  }
+  };
 
-  componentWillReceiveProps(props) {
-    if (props.hidden !== this.props.hidden) {
-      const { status } = this.state
+  // componentWillReceiveProps(nextProps) {
+  //   if (nextProps.hidden !== this.props.hidden) {
+  //     const { status } = this.state
+
+  //     if (status === 'normal' && nextProps.hidden) {
+  //       this.setState({ status: 'hiding' }, this._startAnimation)
+  //     } else if (status === 'hidden' && !nextProps.hidden) {
+  //       this.setState({ status: 'showing' }, this._startAnimation)
+  //     } else if (status === 'hiding' && !nextProps.hidden) {
+  //       // TODO: show button in middle of hiding animation
+  //     } else if (status === 'showing' && nextProps.hidden) {
+  //       // TODO: hide button in middle of showing animation
+  //     }
+  //   }
+  // }
+
+  getDerivedStateFromProps(props, state) {
+    if (state.hidden !== props.hidden) {
+      const { status } = state
 
       if (status === 'normal' && props.hidden) {
-        this.setState({ status: 'hiding' }, this._startAnimation)
+        return { status: 'hiding' }
+        // this.setState({ status: 'hiding' }, this._startAnimation)
       } else if (status === 'hidden' && !props.hidden) {
-        this.setState({ status: 'showing' }, this._startAnimation)
+        return { status: 'showing' }
+        // this.setState({ status: 'showing' }, this._startAnimation)
       } else if (status === 'hiding' && !props.hidden) {
         // TODO: show button in middle of hiding animation
       } else if (status === 'showing' && props.hidden) {
         // TODO: hide button in middle of showing animation
       }
+    } else {
+      return null
     }
   }
 
+  componentDidUpdate() {
+    this._startAnimation()
+  }
+
   render() {
-    const {
-      children,
-      className,
-      direction
-    } = this.props
+    const { children, className, direction } = this.props
 
-    const {
-      status,
-      progress
-    } = this.state
+    const { status, progress } = this.state
 
-    const wrapperStyles = { }
-    const contentStyles = { }
-    const canvasStyles = { }
+    const wrapperStyles = {}
+    const contentStyles = {}
+    const canvasStyles = {}
 
     if (status === 'hiding' || status === 'showing') {
       const prop = this._isHorizontal() ? 'translateX' : 'translateY'
       const size = this._isHorizontal() ? this._rect.width : this._rect.height
-      const value = direction === 'left' || direction === 'top'
-        ? progress : -progress
-      const px = Math.ceil(size * value / 100)
+      const value =
+        direction === 'left' || direction === 'top' ? progress : -progress
+      const px = Math.ceil((size * value) / 100)
 
       wrapperStyles.transform = `${prop}(${px}px)`
       contentStyles.transform = `${prop}(${-px}px)`
@@ -115,10 +135,7 @@ export default class ParticleEffectButton extends Component {
           style={wrapperStyles}
           ref={this._wrapperRef}
         >
-          <div
-            className={styles.content}
-            style={contentStyles}
-          >
+          <div className={styles.content} style={contentStyles}>
             {children}
           </div>
         </div>
@@ -134,25 +151,18 @@ export default class ParticleEffectButton extends Component {
 
   _canvasRef = (ref) => {
     this._canvas = ref
-  }
+  };
 
   _wrapperRef = (ref) => {
     this._wrapper = ref
-  }
+  };
 
   _startAnimation = () => {
     if (!this._canvas || !this._wrapper) return
 
-    const {
-      duration,
-      easing,
-      canvasPadding,
-      onBegin
-    } = this.props
+    const { duration, easing, canvasPadding, onBegin } = this.props
 
-    const {
-      status
-    } = this.state
+    const { status } = this.state
 
     if (status === 'hiding') {
       this._progress = 0
@@ -168,8 +178,8 @@ export default class ParticleEffectButton extends Component {
     this._ctx = this._canvas.getContext('2d')
 
     anime({
-      targets: { value: (status === 'hiding') ? 0 : 100 },
-      value: (status === 'hiding') ? 100 : 0,
+      targets: { value: status === 'hiding' ? 0 : 100 },
+      value: status === 'hiding' ? 100 : 0,
       duration: duration,
       easing: easing,
       begin: onBegin,
@@ -184,7 +194,7 @@ export default class ParticleEffectButton extends Component {
         }
       }
     })
-  }
+  };
 
   _cycleStatus() {
     const { status } = this.state
@@ -211,24 +221,23 @@ export default class ParticleEffectButton extends Component {
       this._cycleStatus()
       this.props.onComplete()
     }
-  }
+  };
 
   _addParticles(progress) {
-    const {
-      canvasPadding,
-      direction,
-      particlesAmountCoefficient
-    } = this.props
+    const { canvasPadding, direction, particlesAmountCoefficient } = this.props
 
-    const {
-      status
-    } = this.state
+    const { status } = this.state
 
     const { width, height } = this._rect
 
-    const delta = status === 'hiding' ? progress - this._progress : this._progress - progress
+    const delta =
+      status === 'hiding'
+        ? progress - this._progress
+        : this._progress - progress
     const isHorizontal = this._isHorizontal()
-    const progressValue = (isHorizontal ? width : height) * progress + delta * (status === 'hiding' ? 100 : 220)
+    const progressValue =
+      (isHorizontal ? width : height) * progress +
+      delta * (status === 'hiding' ? 100 : 220)
 
     this._progress = progress
 
@@ -257,17 +266,11 @@ export default class ParticleEffectButton extends Component {
   }
 
   _addParticle(opts) {
-    const {
-      duration,
-      size,
-      speed
-    } = this.props
+    const { duration, size, speed } = this.props
 
-    const {
-      status
-    } = this.state
+    const { status } = this.state
 
-    const frames = duration * 60 / 1000
+    const frames = (duration * 60) / 1000
     const _speed = isFunc(speed) ? speed() : speed
     const _size = isFunc(size) ? size() : size
 
@@ -278,22 +281,18 @@ export default class ParticleEffectButton extends Component {
       y: 0,
       angle: rand(360),
       counter: status === 'hiding' ? 0 : frames,
-      increase: Math.PI * 2 / 100,
+      increase: (Math.PI * 2) / 100,
       life: 0,
-      death: status === 'hiding' ? (frames - 20) + Math.random() * 40 : frames,
+      death: status === 'hiding' ? frames - 20 + Math.random() * 40 : frames,
       speed: _speed,
       size: _size
     })
   }
 
   _updateParticles() {
-    const {
-      oscillationCoefficient
-    } = this.props
+    const { oscillationCoefficient } = this.props
 
-    const {
-      status
-    } = this.state
+    const { status } = this.state
 
     for (let i = 0; i < this._particles.length; i++) {
       const p = this._particles[i]
@@ -304,21 +303,15 @@ export default class ParticleEffectButton extends Component {
         p.x += p.speed
         p.y = oscillationCoefficient * Math.sin(p.counter * p.increase)
         p.life++
-        p.counter += (status === 'hiding' ? 1 : -1)
+        p.counter += status === 'hiding' ? 1 : -1
       }
     }
   }
 
   _renderParticles() {
-    const {
-      color,
-      type,
-      style
-    } = this.props
+    const { color, type, style } = this.props
 
-    const {
-      status
-    } = this.state
+    const { status } = this.state
 
     this._ctx.clearRect(0, 0, this._canvas.width, this._canvas.height)
     this._ctx.fillStyle = this._ctx.strokeStyle = color
@@ -328,8 +321,9 @@ export default class ParticleEffectButton extends Component {
 
       if (p.life < p.death) {
         this._ctx.translate(p.startX, p.startY)
-        this._ctx.rotate(p.angle * Math.PI / 180)
-        this._ctx.globalAlpha = (status === 'hiding') ? 1 - p.life / p.death : p.life / p.death
+        this._ctx.rotate((p.angle * Math.PI) / 180)
+        this._ctx.globalAlpha =
+          status === 'hiding' ? 1 - p.life / p.death : p.life / p.death
         this._ctx.beginPath()
 
         if (type === 'circle') {
@@ -350,7 +344,7 @@ export default class ParticleEffectButton extends Component {
         }
 
         this._ctx.globalAlpha = 1
-        this._ctx.rotate(-p.angle * Math.PI / 180)
+        this._ctx.rotate((-p.angle * Math.PI) / 180)
         this._ctx.translate(-p.startX, -p.startY)
       }
     }
@@ -361,10 +355,10 @@ export default class ParticleEffectButton extends Component {
   }
 }
 
-function rand (value) {
+function rand(value) {
   return Math.random() * value - value / 2
 }
 
-function isFunc (value) {
+function isFunc(value) {
   return typeof value === 'function'
 }
