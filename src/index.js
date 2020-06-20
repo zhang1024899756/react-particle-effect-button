@@ -63,45 +63,45 @@ export default class ParticleEffectButton extends Component {
     height: 0
   };
 
-  // componentWillReceiveProps(nextProps) {
-  //   if (nextProps.hidden !== this.props.hidden) {
-  //     const { status } = this.state
+  UNSAFE_componentWillReceiveProps(nextProps) {
+    if (nextProps.hidden !== this.props.hidden) {
+      const { status } = this.state
 
-  //     if (status === 'normal' && nextProps.hidden) {
-  //       this.setState({ status: 'hiding' }, this._startAnimation)
-  //     } else if (status === 'hidden' && !nextProps.hidden) {
-  //       this.setState({ status: 'showing' }, this._startAnimation)
-  //     } else if (status === 'hiding' && !nextProps.hidden) {
-  //       // TODO: show button in middle of hiding animation
-  //     } else if (status === 'showing' && nextProps.hidden) {
-  //       // TODO: hide button in middle of showing animation
-  //     }
-  //   }
-  // }
-
-  getDerivedStateFromProps(props, state) {
-    if (state.hidden !== props.hidden) {
-      const { status } = state
-
-      if (status === 'normal' && props.hidden) {
-        return { status: 'hiding' }
-        // this.setState({ status: 'hiding' }, this._startAnimation)
-      } else if (status === 'hidden' && !props.hidden) {
-        return { status: 'showing' }
-        // this.setState({ status: 'showing' }, this._startAnimation)
-      } else if (status === 'hiding' && !props.hidden) {
+      if (status === 'normal' && nextProps.hidden) {
+        this.setState({ status: 'hiding' }, this._startAnimation)
+      } else if (status === 'hidden' && !nextProps.hidden) {
+        this.setState({ status: 'showing' }, this._startAnimation)
+      } else if (status === 'hiding' && !nextProps.hidden) {
         // TODO: show button in middle of hiding animation
-      } else if (status === 'showing' && props.hidden) {
+      } else if (status === 'showing' && nextProps.hidden) {
         // TODO: hide button in middle of showing animation
       }
-    } else {
-      return null
     }
   }
 
-  componentDidUpdate() {
-    this._startAnimation()
-  }
+  // getDerivedStateFromProps(props, state) {
+  //   if (state.hidden !== props.hidden) {
+  //     const { status } = state
+
+  //     if (status === 'normal' && props.hidden) {
+  //       return { status: 'hiding' }
+  //       // this.setState({ status: 'hiding' }, this._startAnimation)
+  //     } else if (status === 'hidden' && !props.hidden) {
+  //       return { status: 'showing' }
+  //       // this.setState({ status: 'showing' }, this._startAnimation)
+  //     } else if (status === 'hiding' && !props.hidden) {
+  //       // TODO: show button in middle of hiding animation
+  //     } else if (status === 'showing' && props.hidden) {
+  //       // TODO: hide button in middle of showing animation
+  //     }
+  //   } else {
+  //     return null
+  //   }
+  // }
+
+  // componentDidUpdate() {
+  //   this._startAnimation()
+  // }
 
   render() {
     const { children, className, direction } = this.props
