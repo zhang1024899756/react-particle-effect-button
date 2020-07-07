@@ -6,6 +6,8 @@
 
 [![Demo](https://raw.githubusercontent.com/transitive-bullshit/react-particle-effect-button/master/example/demo.gif)](https://transitive-bullshit.github.io/react-particle-effect-button/)
 
+This package is the fork version of transitive-bullshit/react-particle-effect-button
+Fixed a bug caused by react updates
 This library is a React port of an awesome [Codrops Article](https://tympanus.net/codrops/2018/04/25/particle-effects-for-buttons/) by [Luis Manuel](https://tympanus.net/codrops/author/luis/) (original [source](https://github.com/codrops/ParticleEffectsButtons/)).
 
 ## Install
@@ -21,7 +23,7 @@ Check out the [Demo](https://transitive-bullshit.github.io/react-particle-effect
 ```jsx
 import React, { Component } from 'react'
 
-import ParticleEffectButton from 'react-particle-effect-button'
+import ParticleEffectButton from 'react-particle-effect-button-z'
 
 class App extends Component {
   state = {
