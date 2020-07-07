@@ -11,7 +11,7 @@ This library is a React port of an awesome [Codrops Article](https://tympanus.ne
 ## Install
 
 ```bash
-npm install --save react-particle-effect-button
+npm install --save react-particle-effect-button-z
 ```
 
 ## Usage
